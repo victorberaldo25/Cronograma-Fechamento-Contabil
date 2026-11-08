@@ -8,7 +8,13 @@ const { onRequest } = require('firebase-functions/v2/https');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'fechamento-contabil-super-secret-token-key-2026';
+const crypto = require('crypto');
+// Nunca use segredo fixo no código: defina JWT_SECRET no ambiente (.env / config do Firebase).
+// Sem a variável, gera um segredo aleatório por processo (sessões expiram a cada reinício).
+const JWT_SECRET = process.env.JWT_SECRET || (() => {
+  console.warn('[AVISO] JWT_SECRET não definido — usando segredo aleatório temporário.');
+  return crypto.randomBytes(48).toString('hex');
+})();
 
 // ----------------------------------------------------
 // FIREBASE ADMIN SDK INITIALIZATION
@@ -150,17 +156,18 @@ async function bootstrapDB() {
     const usersSnap = await db.collection('usuarios').limit(1).get();
     if (usersSnap.empty) {
       const salt = bcrypt.genSaltSync(10);
-      const passwordHash = bcrypt.hashSync('admin123', salt);
+      const senhaInicial = process.env.ADMIN_INITIAL_PASSWORD || crypto.randomBytes(9).toString('base64url');
+      const passwordHash = bcrypt.hashSync(senhaInicial, salt);
       const adminUser = {
         uid: 'usr_admin',
-        email: 'admin@fecho.com',
+        email: process.env.ADMIN_EMAIL || 'admin@example.com',
         nome: 'Administrador',
         passwordHash: passwordHash,
         is_admin: true,
         setores_vinculados: []
       };
       await db.collection('usuarios').doc(adminUser.uid).set(adminUser);
-      console.log('Default Admin user seeded in Firestore ("usuarios" collection: admin@fecho.com / admin123).');
+      console.log(`Admin inicial criado (${adminUser.email}). Senha: ${process.env.ADMIN_INITIAL_PASSWORD ? '[definida em ADMIN_INITIAL_PASSWORD]' : senhaInicial} — troque após o primeiro login.`);
     }
   } catch (err) {
     console.error('Error bootstrapping Firestore database:', err.message);

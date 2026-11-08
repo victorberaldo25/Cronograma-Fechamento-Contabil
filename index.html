@@ -575,7 +575,7 @@ html.light-theme .toast-info { background:rgba(230,240,252,0.95); }
     <div class="login-sub">Gestão de Fechamento Contábil-Fiscal</div>
     <div class="form-group">
       <label class="form-label">Usuário</label>
-      <input class="form-input" id="login-user" type="text" placeholder="Digite seu usuário (Ex: Victor Beraldo)">
+      <input class="form-input" id="login-user" type="text" placeholder="Digite seu usuário (Ex: admin)">
     </div>
     <div class="form-group">
       <label class="form-label">Senha</label>
@@ -1417,7 +1417,7 @@ function showSetupScreen() {
   document.querySelector('.login-logo').innerHTML = 'Configurar <span>Administrador</span>';
   document.querySelector('.login-sub').textContent = 'Defina o usuário e senha do administrador (Primeiro Acesso)';
   document.querySelector('#login-screen .form-group .form-label').textContent = 'Definir Usuário Administrador';
-  document.querySelector('#login-user').placeholder = 'Ex: Victor Beraldo';
+  document.querySelector('#login-user').placeholder = 'Ex: admin';
   document.querySelector('#login-btn-text').textContent = 'Cadastrar e Entrar';
   document.querySelector('#login-btn-icon').className = 'fa-solid fa-user-plus';
 }
@@ -1426,7 +1426,7 @@ function showLoginScreen() {
   document.querySelector('.login-logo').innerHTML = 'Fechamento <span>Contábil/Fiscal</span>';
   document.querySelector('.login-sub').textContent = 'Sistema de Gestão de Fechamento Contábil-Fiscal';
   document.querySelector('#login-screen .form-group .form-label').textContent = 'Usuário';
-  document.querySelector('#login-user').placeholder = 'Digite seu usuário (Ex: Victor Beraldo)';
+  document.querySelector('#login-user').placeholder = 'Digite seu usuário (Ex: admin)';
   document.querySelector('#login-btn-text').textContent = 'Entrar';
   document.querySelector('#login-btn-icon').className = 'fa-solid fa-arrow-right-to-bracket';
 }
@@ -4292,7 +4292,7 @@ function renderUsuariosTable() {
         <td>
           <div style="display:flex;gap:6px;">
             <button class="btn btn-ghost btn-sm" onclick="editUsuario('${u.id}')"><i class="fa-solid fa-pen"></i></button>
-            ${u.login !== 'victor.beraldo' && u.id !== currentUser.id ? `<button class="btn btn-danger btn-sm" onclick="deleteUsuario('${u.id}')"><i class="fa-solid fa-trash"></i></button>` : ''}
+            ${u.login !== 'admin' && u.id !== currentUser.id ? `<button class="btn btn-danger btn-sm" onclick="deleteUsuario('${u.id}')"><i class="fa-solid fa-trash"></i></button>` : ''}
           </div>
         </td>
       </tr>
@@ -4552,7 +4552,7 @@ function handleFileSelect(e) {
       const data = evt.target.result;
       const workbook = XLSX.read(data, { type: 'binary', cellDates: true });
       
-      let sheetName = workbook.SheetNames.find(n => n.includes('Importação') || n.includes('Dados') || n.includes('Victor'));
+      let sheetName = workbook.SheetNames.find(n => n.includes('Importação') || n.includes('Dados'));
       if (!sheetName) sheetName = workbook.SheetNames[0];
       
       const sheet = workbook.Sheets[sheetName];
